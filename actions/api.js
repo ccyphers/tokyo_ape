@@ -11,6 +11,11 @@ module.exports = function(base_url, headers) {
         return this.post(options);
     };
 
+    api.update = function(name_or_id, options) {
+        this.path = '/apis/' + name_or_id;
+        return this.patch(options);
+    };
+
     api.remove = function(name_or_id) {
         this.path = '/apis/' + name_or_id;
         return this.delete();
