@@ -3,7 +3,7 @@
 For user's who enjoy working with mashape's
 kong(https://getkong.org) and want a standalone nodejs based API
 for integrating with the Admin interface,
-without a lot of overhead review the examples to gen an idea how you can
+without a lot of overhead review the examples to get an idea how you can
 use this interface in your project.
 
 This is very early stage code, with a lot of enhancements
