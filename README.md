@@ -14,13 +14,13 @@ Tokyo Ape.
 ## Getting Started Examples
 
 ### Add an API(examples/add_api.js):
-    var kong = require('./index')()
+    var kong = require('tokyo_ape')()
         , util = require('util');
 
 
     /*
     INPUT
-    Object containing any valid options alled to POST http://kong_admin/apis
+    Object containing any valid options to POST http://kong_admin/apis
 
     OUTPUT:
      { upstream_url: 'https://www.google.com',
@@ -41,7 +41,7 @@ Tokyo Ape.
 
 
 ### Add a plugin to an API(examples/add_plugin_to_api.js):
-    var kong = require('./index')()
+    var kong = require('tokyo_ape')()
         , util = require('util');
 
 
@@ -73,7 +73,7 @@ Tokyo Ape.
 
 
 ### Remove a plugin from an API(examples/remove_plugin_from_api.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -93,7 +93,7 @@ Tokyo Ape.
 
 
 ### Remove all plugins from an API(examples/remove_all_plugins_from_api.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -112,7 +112,7 @@ Tokyo Ape.
 
 
 ### Remove an API(examples/remove_api.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -130,7 +130,7 @@ Tokyo Ape.
 
 
 ### Add a consumer(examples/add_consumer.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -151,7 +151,7 @@ Tokyo Ape.
         });
 
 ### List a consumer(examples/list_consumer.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -170,7 +170,7 @@ Tokyo Ape.
         });
 
 ### List all consumers(examples/list_all_consumers.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -185,7 +185,7 @@ Tokyo Ape.
         });
 
 ### Get a JWT Token for a consumer(examples/get_jwt_token_for_consumer.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -205,7 +205,7 @@ Tokyo Ape.
         });
 
 ### Remove all JWTs from a consumer(examples/remove_all_jwts_from_consumer.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -222,7 +222,7 @@ Tokyo Ape.
 
 
 ### Remove a consumer(examples/remove_consumer.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
@@ -238,7 +238,7 @@ Tokyo Ape.
         });
 
 ### Remove all consumers(examples/remove_all_consumers.js):
-    kong = require('./index')();
+    kong = require('tokyo_ape')();
 
 
     /*
