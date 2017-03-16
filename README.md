@@ -39,7 +39,7 @@ Tokyo Ape.
 
      */
 
-    kong.api.add({name: 'google', upstream_url: 'https://www.google.com', request_path: '/google', strip_request_path: true})
+    kong.api.add({name: 'google', methods: 'GET', upstream_url: 'https://www.google.com', uris: '/google', strip_uri: true})
         .then(function(res) {
             console.log(util.inspect(res.body));
         });
