@@ -5,7 +5,7 @@ var kong = require('../index')()
 kong.service.add({name: 'google'})
     .then(function(res) {
         console.log(util.inspect(res.body));
-        return kong.service.setTargets('google', {target: '172.217.6.142:443'})
+        return kong.service.setTargets('google', {target: '172.217.6.142:443', name: 'google_host_1'})
 
     })
     .then(function(res) {
