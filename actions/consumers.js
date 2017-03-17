@@ -1,99 +1,114 @@
-"use strict";
+/* eslint camelcase: 'off' */
 
-module.exports = function(base_url, headers) {
-    var kong = require('../lib/kong')
-        ,consumers = {}
-        , Promise = require('bluebird')
-        , normalize_body = require('../lib/normalize_body');
+const kong = require('../lib/kong');
 
-    consumers.create = function(options) {
-        this.path = '/consumers';
-        return this.post(options)
-    };
+const Promise = require('bluebird');
 
-    consumers.listAll = function() {
-        this.path = '/consumers';
-        return this.get()
-    };
+const normalize_body = require('../lib/normalize_body');
 
-    consumers.list = function(id) {
-        this.path = '/consumers/' + id;
-        return this.get()
-    };
 
-    consumers.remove = function(id) {
-        this.path = '/consumers/' + id;
-        return this.delete()
-    };
+function consumersModule(base_url, headers) {
+  function create(options) {
+    this.path = '/consumers';
+    return this.post(options);
+  }
 
-    consumers.removeAll = function() {
-        var promises = [];
+  function listAll() {
+    this.path = '/consumers';
+    return this.get();
+  }
 
-        return this.listAll()
-            .then(function(res) {
-                res.body = normalize_body(res.body);
+  function list(id) {
+    this.path = `/consumers/${id}`;
+    return this.get();
+  }
 
-                res.body.data.forEach(function(consumer) {
-                    promises.push(consumers.remove(consumer.id));
-                });
+  function remove(id) {
+    this.path = `/consumers/${id}`;
+    return this.delete();
+  }
 
-                return Promise.all(promises)
-            })
-    };
+  function removeAll() {
+    const promises = [];
 
-    consumers.removeJWT = function(consumer_id, jwt_id) {
-        this.path = '/consumers/' + consumer_id + '/jwt/' + jwt_id;
-        return this.delete();
+    return this.listAll()
+            .then((res) => {
+              res.body = normalize_body(res.body); /* eslint no-param-reassign: 'off' */
 
-    };
-
-    consumers.removeAllJWTFromConsumer = function(id_or_name) {
-        this.path = '/consumers/' + id_or_name + '/jwt';
-        var promises = [];
-        return this.get()
-            .then(function(res) {
-                res.body = normalize_body(res.body);
-                res.body.data.forEach(function(item) {
-                    promises.push(consumers.removeJWT(id_or_name, item.id))
-                });
-                return Promise.all(promises)
-            })
-    };
-
-    consumers.removeAllJWT = function() {
-      return this.listAll()
-          .then(function(res) {
-              res.body = normalize_body(res.body);
-
-              var promises = [];
-              res.body.data.forEach(function(consumer) {
-                  promises.push(consumers.listAllJWT(consumer.id));
+              res.body.data.forEach((consumer) => {
+                promises.push(remove(consumer.id));
               });
-              return Promise.all(promises)
-                  .then(function(jwts) {
-                      promises = [];
-                      jwts.forEach(function(jwt) {
-                          jwt.body = normalize_body(jwt.body);
 
-                          jwt.body.data.forEach(function(item) {
-                              promises.push(consumers.removeJWT(item.consumer_id, item.id))
-                          })
+              return Promise.all(promises);
+            });
+  }
+
+  function removeJWT(consumer_id, jwt_id) {
+    this.path = `/consumers/${consumer_id}/jwt/${jwt_id}`;
+    return this.delete();
+  }
+
+  function removeAllJWTFromConsumer(id_or_name) {
+    this.path = `/consumers/${id_or_name}/jwt`;
+    const promises = [];
+    return this.get()
+            .then((res) => {
+              res.body = normalize_body(res.body);
+              res.body.data.forEach((item) => {
+                promises.push(removeJWT(id_or_name, item.id));
+              });
+              return Promise.all(promises);
+            });
+  }
+
+  function listAllJWT(consumer_id) {
+    this.path = `/consumers/${consumer_id}/jwt`;
+    return this.get();
+  }
+
+  function removeAllJWT() {
+    return this.listAll()
+          .then((res) => {
+            res.body = normalize_body(res.body);
+
+            let promises = [];
+            res.body.data.forEach((consumer) => {
+              promises.push(listAllJWT(consumer.id));
+            });
+            return Promise.all(promises)
+                  .then((jwts) => {
+                    promises = [];
+                    jwts.forEach((jwt) => {
+                      jwt.body = normalize_body(jwt.body);
+
+                      jwt.body.data.forEach((item) => {
+                        promises.push(removeJWT(item.consumer_id, item.id));
                       });
-                      return Promise.all(promises);
-                  })
-          })
-    };
+                    });
+                    return Promise.all(promises);
+                  });
+          });
+  }
 
-    consumers.listAllJWT = function(consumer_id) {
-        this.path = '/consumers/' + consumer_id + '/jwt';
-        return this.get()
-    };
+  function createJWT(consumer_id, options) {
+    this.path = `/consumers/${consumer_id}/jwt`;
+    return this.post(options);
+  }
 
-    consumers.createJWT = function(consumer_id, options) {
-        this.path = '/consumers/' + consumer_id + '/jwt';
-        return this.post(options);
-    };
+  const consumers = {
+    create,
+    listAll,
+    list,
+    remove,
+    removeAll,
+    removeJWT,
+    removeAllJWTFromConsumer,
+    removeAllJWT,
+    listAllJWT,
+    createJWT,
+  };
 
-    return kong(base_url, headers, consumers);
-};
+  return kong(base_url, headers, consumers);
+}
 
+module.exports = consumersModule;

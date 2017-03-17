@@ -1,48 +1,62 @@
-"use strict";
+/* eslint camelcase: 'off' */
 
-module.exports = function(base_url, headers) {
-    var kong = require('../lib/kong')
-        ,api = {}
-        , normalize_body = require('../lib/normalize_body')
-        , Promise = require('bluebird');
+const kong = require('../lib/kong');
 
-    api.add = function(options) {
-        this.path = '/apis';
-        return this.post(options);
-    };
+const normalize_body = require('../lib/normalize_body');
 
-    api.update = function(name_or_id, options) {
-        this.path = '/apis/' + name_or_id;
-        return this.patch(options);
-    };
+const Promise = require('bluebird');
 
-    api.remove = function(name_or_id) {
-        this.path = '/apis/' + name_or_id;
-        return this.delete();
-    };
 
-    api.addPlugin = function(name_or_id, options) {
-        this.path = '/apis/' + name_or_id + '/plugins';
-        return this.post(options);
-    };
+function apiModule(base_url, headers) {
+  function add(options) {
+    this.path = '/apis';
+    return this.post(options);
+  }
 
-    api.removePlugin = function(api_name_or_id, id) {
-        this.path = '/apis/' + api_name_or_id + '/plugins/' + id;
-        return this.delete();
-    };
+  function update(name_or_id, options) {
+    this.path = `/apis/${name_or_id}`;
+    return this.patch(options);
+  }
 
-    api.removeAllPlugins = function(name_or_id) {
-        this.path = '/apis/' + name_or_id + '/plugins';
-        var promises = [];
-        return this.get()
-            .then(function(res) {
-                res.body = normalize_body(res.body);
-                res.body.data.forEach(function(item) {
-                    promises.push(api.removePlugin(name_or_id, item.id))
-                });
-                return Promise.all(promises);
-            })
-    };
+  function remove(name_or_id) {
+    this.path = `/apis/${name_or_id}`;
+    return this.delete();
+  }
 
-    return kong(base_url, headers, api);
-};
+  function addPlugin(name_or_id, options) {
+    this.path = `/apis/${name_or_id}/plugins`;
+    return this.post(options);
+  }
+
+  function removePlugin(api_name_or_id, id) {
+    this.path = `/apis/${api_name_or_id}/plugins/${id}`;
+    return this.delete();
+  }
+
+  function removeAllPlugins(name_or_id) {
+    this.path = `/apis/${name_or_id}/plugins`;
+    const promises = [];
+    return this.get()
+        .then((res) => {
+          res.body = normalize_body(res.body); /* eslint no-param-reassign: 'off' */
+          res.body.data.forEach((item) => {
+            promises.push(removePlugin(name_or_id, item.id));
+          });
+          return Promise.all(promises);
+        });
+  }
+
+  const api = {
+    add,
+    update,
+    remove,
+    addPlugin,
+    removePlugin,
+    removeAllPlugins,
+  };
+
+  return kong(base_url, headers, api);
+}
+
+
+module.exports = apiModule;
