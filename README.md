@@ -13,10 +13,26 @@ Tokyo Ape.
 
 ## Getting Started Examples
 
+### Add an API Through service discovery
+    var kong = require('../index')()
+    
+    kong.service.add({name: 'google'})
+        .then(function(res) {
+            
+            return kong.service.setTargets('google', {target: '172.217.6.142:443'})
+    
+        })
+        .then(function(res) {
+            console.log(res);
+            return kong.api.add({name: 'google', methods: 'GET', upstream_url: 'https://google', uris: '/google', strip_uri: true})
+        })
+        .then(function(res) {
+            console.log(res);
+        })
+
+
 ### Add an API(examples/add_api.js):
     var kong = require('tokyo_ape')()
-        , util = require('util');
-
 
     /*
     INPUT
@@ -41,16 +57,13 @@ Tokyo Ape.
 
     kong.api.add({name: 'google', methods: 'GET', upstream_url: 'https://www.google.com', uris: '/google', strip_uri: true})
         .then(function(res) {
-            console.log(util.inspect(res.body));
+            console.log(res);
         });
 
 
 
 ### Add a plugin to an API(examples/add_plugin_to_api.js):
     var kong = require('tokyo_ape')()
-        , util = require('util');
-
-
 
     /*
     INPUT
@@ -74,7 +87,7 @@ Tokyo Ape.
 
     kong.api.addPlugin('google', {name: 'jwt'})
         .then(function(res) {
-            console.log(util.inspect(res.body));
+            console.log(res);
         });
 
 
@@ -94,7 +107,7 @@ Tokyo Ape.
 
     kong.api.removePlugin('google', '2ebd7629-4237-4253-a6ee-f54734a2b7ac')
         .then(function(res) {
-            console.log(JSON.stringify(res));
+            console.log(res);
         });
 
 
@@ -113,7 +126,7 @@ Tokyo Ape.
 
     kong.api.removeAllPlugins('google')
         .then(function(res) {
-            console.log(JSON.stringify(res));
+            console.log(res);
         });
 
 
@@ -130,7 +143,7 @@ Tokyo Ape.
 
     kong.api.remove('google')
         .then(function(res) {
-            console.log(JSON.stringify(res));
+            console.log(res);
         });
 
 
@@ -153,7 +166,7 @@ Tokyo Ape.
      */
     kong.consumers.create({username: 'user1'})
         .then(function(res) {
-            console.log(res.body);
+            console.log(res);
         });
 
 ### List a consumer(examples/list_consumer.js):
@@ -172,7 +185,7 @@ Tokyo Ape.
      */
     kong.consumers.list('user1')
         .then(function(res) {
-            console.log(res.body);
+            console.log(res);
         });
 
 ### List all consumers(examples/list_all_consumers.js):
@@ -187,7 +200,7 @@ Tokyo Ape.
 
     kong.consumers.listAll()
         .then(function(res) {
-            console.log(JSON.stringify(res.body.data));
+            console.log(res);
         });
 
 ### Get a JWT Token for a consumer(examples/get_jwt_token_for_consumer.js):
@@ -223,7 +236,7 @@ Tokyo Ape.
      */
     kong.consumers.removeAllJWTFromConsumer('user1')
         .then(function(res) {
-            console.log(JSON.stringify(res));
+            console.log(res);
         });
 
 
@@ -240,7 +253,7 @@ Tokyo Ape.
      */
     kong.consumers.remove('user1')
         .then(function(res) {
-            console.log(res.body);
+            console.log(res);
         });
 
 ### Remove all consumers(examples/remove_all_consumers.js):
