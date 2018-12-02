@@ -42,12 +42,9 @@ function serviceModule(base_url, headers) {
     return this.post(options);
   };
 
-  // since targets can't be deleted set the weight to 0 for deactivation
-  api.removeTarget = function removeTarget(name_or_id, target_name_or_id) {
-    const options = {
-      weight: 0,
-    };
-    return api.updateTarget(name_or_id, target_name_or_id, options);
+  api.deleteTarget = function removeTarget(name_or_id, target_name_or_id) {
+    this.path = `${upstreamsPath}/${name_or_id}/targets/${target_name_or_id}`;
+    return this.delete()
   };
 
 
