@@ -10,6 +10,11 @@ const Promise = require('bluebird');
 function apiModule(base_url, headers) {
   const api = {};
 
+  api.list = function add(options) {
+    this.path = '/apis';
+    return this.get(options);
+  };
+
   api.add = function add(options) {
     this.path = '/apis';
     return this.post(options);
