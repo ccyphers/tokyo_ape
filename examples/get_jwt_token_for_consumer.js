@@ -1,5 +1,4 @@
-kong = require('../index')();
-
+const kong = require('../index')();
 
 /*
 INPUT
@@ -12,8 +11,5 @@ OUTPUT
  to be used with api calls for header: 'Authorization: Bearer returned_token'
 
  */
-kong.token.jwt('user1')
-    .then(function(token) {
-        console.log(token);
-    });
+kong.token.jwt('user1').then(console.log);
 

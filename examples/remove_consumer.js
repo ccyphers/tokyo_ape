@@ -1,4 +1,4 @@
-kong = require('../index')();
+const kong = require('../index')();
 
 
 /*
@@ -8,8 +8,4 @@ INPUT
 OUTPUT: body will be an empty string with all other header and http status information preserved.
 
  */
-kong.consumers.remove('user1')
-    .then(function(res) {
-        console.log(res.body);
-    });
-
+kong.consumers.remove('user1').then(console.log);

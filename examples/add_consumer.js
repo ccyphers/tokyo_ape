@@ -1,5 +1,4 @@
-var kong = require('../index')()
-    , util = require('util');
+const kong = require('../index')();
 
 /*
 INPUT
@@ -13,8 +12,4 @@ OUTPUT
  id: 'some id' }
 
  */
-kong.consumers.create({username: 'user1'})
-    .then(function(res) {
-        console.log(util.inspect(res.body));
-    });
-
+kong.consumers.create({username: 'user1'}).then(console.log);

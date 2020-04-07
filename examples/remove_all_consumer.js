@@ -1,13 +1,8 @@
-var kong = require('../index')()
-    , util = require('util');
+const kong = require('../index')();
 
 /*
 INPUT: none
 
 
  */
-kong.consumers.removeAll()
-    .then(function(res) {
-        console.log(util.inspect(res));
-    });
-
+kong.consumers.removeAll().then(console.log);
