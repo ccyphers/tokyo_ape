@@ -1,9 +1,3 @@
-var kong = require('../index')()
-    , util = require('util');
+const kong = require('../index')();
 
-
-kong.service.deleteTarget('google', 'google_host_1')
-    .then(function(res) {
-        console.log(util.inspect(res.body));
-    })
-
+kong.upstreams.deleteTarget('google', 'google_host_1').then(console.log);

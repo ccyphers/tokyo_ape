@@ -2,104 +2,80 @@
 
 const kong = require('../lib/kong');
 
-const Promise = require('bluebird');
-
-const normalize_body = require('../lib/normalize_body');
-
-
 function consumersModule(base_url, headers) {
-  const consumers = {};
+    const consumers = {};
 
 
-  consumers.create = function create(options) {
-    this.path = '/consumers';
-    return this.post(options);
-  };
+    consumers.create = function create(options) {
+        this.path = '/consumers';
+        return this.post(options);
+    };
 
-  consumers.listAll = function listAll() {
-    this.path = '/consumers';
-    return this.get();
-  };
+    consumers.listAll = function listAll() {
+        this.path = '/consumers';
+        return this.get();
+    };
 
-  consumers.list = function list(id) {
-    this.path = `/consumers/${id}`;
-    return this.get();
-  };
+    consumers.list = function list(id) {
+        this.path = `/consumers/${id}`;
+        return this.get();
+    };
 
-  consumers.remove = function remove(id) {
-    this.path = `/consumers/${id}`;
-    return this.delete();
-  };
+    consumers.remove = function remove(id) {
+        this.path = `/consumers/${id}`;
+        return this.delete();
+    };
 
-  consumers.removeAll = function removeAll() {
-    const promises = [];
+    consumers.removeAll = function removeAll() {
+        return this.listAll()
+            .then((res) =>
+                Promise.all(
+                    res.data.map(consumer => consumers.remove(consumer.id))
+                )
+            );
+    };
 
-    return this.listAll()
-        .then((res) => {
-          res.body = normalize_body(res.body); /* eslint no-param-reassign: 'off' */
+    consumers.removeJWT = function removeJWT(consumer_id, jwt_id) {
+        this.path = `/consumers/${consumer_id}/jwt/${jwt_id}`;
+        return this.delete();
+    };
 
-          res.body.data.forEach((consumer) => {
-            promises.push(consumers.remove(consumer.id));
-          });
+    consumers.removeAllJWTFromConsumer = function removeAllJWTFromConsumer(id_or_name) {
+        this.path = `/consumers/${id_or_name}/jwt`;
+        return this.get()
+            .then(res =>
+                Promise.all(
+                    res.data.map(consumer => consumers.removeJWT(id_or_name, consumer.id)) 
+                )
+            );
+    };
 
-          return Promise.all(promises);
-        });
-  };
+    consumers.removeAllJWT = function removeAllJWT() {
+        return this.listAll()
+            .then(res => 
+                Promise.all(
+                    res.data.map(consumer => consumers.listAllJWT(consumer.id))
+                )
+            )
+            .then(jwts =>
+                Promise.all(
+                    jwts.map(jwt => consumers.removeJWT(jwt.consumer_id, jwt.id))
+                )
+            );
+    };
 
-  consumers.removeJWT = function removeJWT(consumer_id, jwt_id) {
-    this.path = `/consumers/${consumer_id}/jwt/${jwt_id}`;
-    return this.delete();
-  };
+    consumers.listAllJWT = function listAllJWT(consumer_id) {
+        this.path = `/consumers/${consumer_id}/jwt`;
+        return this.get();
+    };
 
-  consumers.removeAllJWTFromConsumer = function removeAllJWTFromConsumer(id_or_name) {
-    this.path = `/consumers/${id_or_name}/jwt`;
-    const promises = [];
-    return this.get()
-        .then((res) => {
-          res.body = normalize_body(res.body);
-          res.body.data.forEach((item) => {
-            promises.push(consumers.removeJWT(id_or_name, item.id));
-          });
-          return Promise.all(promises);
-        });
-  };
-
-  consumers.removeAllJWT = function removeAllJWT() {
-    return this.listAll()
-        .then((res) => {
-          res.body = normalize_body(res.body);
-
-          let promises = [];
-          res.body.data.forEach((consumer) => {
-            promises.push(consumers.listAllJWT(consumer.id));
-          });
-          return Promise.all(promises)
-              .then((jwts) => {
-                promises = [];
-                jwts.forEach((jwt) => {
-                  jwt.body = normalize_body(jwt.body);
-
-                  jwt.body.data.forEach((item) => {
-                    promises.push(consumers.removeJWT(item.consumer_id, item.id));
-                  });
-                });
-                return Promise.all(promises);
-              });
-        });
-  };
-
-  consumers.listAllJWT = function listAllJWT(consumer_id) {
-    this.path = `/consumers/${consumer_id}/jwt`;
-    return this.get();
-  };
-
-  consumers.createJWT = function createJWT(consumer_id, options) {
-    this.path = `/consumers/${consumer_id}/jwt`;
-    return this.post(options);
-  };
+    consumers.createJWT = function createJWT(consumer_id, options) {
+        this.path = `/consumers/${consumer_id}/jwt`;
+        return this.post(options);
+    };
 
 
-  return kong(base_url, headers, consumers);
+    return kong(base_url, headers, consumers);
 }
 
 module.exports = consumersModule;

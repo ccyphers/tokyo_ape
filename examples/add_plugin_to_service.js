@@ -1,8 +1,5 @@
-var kong = require('../index')()
-    , util = require('util');
-
-
-
+const kong = require('../index')();
+    
 /*
 INPUT
 arguments[0]: id or name for api
@@ -23,8 +20,4 @@ Example OUTPUT:
  key_claim_name: 'iss' } }
  */
 
-kong.api.addPlugin('google', {name: 'jwt'})
-    .then(function(res) {
-        console.log(util.inspect(res.body));
-    });
-
+kong.services.addPlugin('google', {name: 'jwt'}).then(console.log);

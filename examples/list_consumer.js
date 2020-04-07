@@ -1,5 +1,4 @@
-kong = require('../index')();
-
+const kong = require('../index')();
 
 /*
 INPUT
@@ -11,8 +10,4 @@ OUTPUT
  id: 'some id' }
 
  */
-kong.consumers.list('user1')
-    .then(function(res) {
-        console.log(res.body);
-    });
-
+kong.consumers.list('user1').then(console.log);
