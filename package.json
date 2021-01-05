@@ -9,7 +9,7 @@
   "author": "Cliff Cyphers",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.11",
     "node-uuid": "^1.4.7"
